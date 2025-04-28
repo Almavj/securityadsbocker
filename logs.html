@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Logs | AdFree Security</title>
+    <link rel="stylesheet" href="css/reports.css">
+    <link rel="stylesheet" href="js/reports.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Base Styles */
+        :root {
+            --primary-color: #4361ee;
+            --primary-hover: #3a56d4;
+            --danger-color: #ef233c;
+            --danger-hover: #d90429;
+            --success-color: #2ec4b6;
+            --success-hover: #1b9aaa;
+            --warning-color: #ff9f1c;
+            --warning-hover: #ffbf69;
+            --text-color: #2b2d42;
+            --text-light: #8d99ae;
+            --bg-color: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius-md: 8px;
+            --radius-sm: 4px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background-color: #2b2d42;
+            color: white;
+            padding: 1.5rem 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 0 1.5rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .sidebar-nav {
+            flex: 1;
+            padding: 1.5rem 0;
+        }
+
+        .nav-item {
+            list-style: none;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .sidebar-footer {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .username {
+            font-weight: 500;
+            display: block;
+        }
+
+        .user-role {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: var(--bg-color);
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .content-header h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .btn-outline:hover {
+            background-color: #f1f3f5;
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            border-radius: 50%;
+        }
+
+        /* Logs Container */
+        .logs-container {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        #logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        #logs-table thead {
+            background-color: #f8f9fa;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        #logs-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.75rem;
+            position: sticky;
+            top: 0;
+        }
+
+        #logs-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        #logs-table tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Badge Styles */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-blocked {
+            background-color: #fff0f0;
+            color: var(--danger-color);
+            border: 1px solid #f5c6cb;
+        }
+
+        .badge-allowed {
+            background-color: #f0fff4;
+            color: var(--success-color);
+            border: 1px solid #c3e6cb;
+        }
+
+        /* Loading Indicator */
+        .loading-indicator {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Stats Cards */
+        .logs-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: var(--radius-md);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-card h3 {
+            font-size: 0.875rem;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card .value {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                padding: 1rem;
+            }
+            
+            .main-content {
+                padding: 1.5rem;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            #logs-table th, 
+            #logs-table td {
+                padding: 0.75rem;
+                font-size: 0.8125rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logs-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="logo">
+                <img src="assets/images/logo.svg" alt="AdFree Logo">
+                <span>AdFree</span>
+            </a>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="blocklist.html" class="nav-link">
+                        <i class="fas fa-ban"></i>
+                        <span>Blocklist</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="logs.html" class="nav-link active">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Request Logs</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="reports.html" class="nav-link">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="admin/settings.html" class="nav-link">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="assets/images/user-avatar.jpg" alt="User Avatar" class="user-avatar">
+                <div class="user-info">
+                    <span class="username">Admin User</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+            </div>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <header class="content-header">
+                <h1>Request Logs</h1>
+                <div class="header-actions">
+                    <button class="btn btn-outline">
+                        <i class="fas fa-download"></i>
+                        <span>Export</span>
+                    </button>
+                    <button id="refresh-logs" class="btn btn-primary">
+                        <i class="fas fa-sync-alt"></i>
+                        <span>Refresh</span>
+                    </button>
+                </div>
+            </header>
+            
+            <div class="logs-container">
+                <table id="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Application</th>
+                            <th>Domain</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Logs will be loaded here dynamically -->
+                    </tbody>
+                </table>
+                <div class="loading-indicator" id="loading-logs">
+                    <div class="spinner"></div>
+                    <p>Loading logs...</p>
+                </div>
+            </div>
+
+            <div class="logs-stats">
+                <div class="stat-card">
+                    <h3>Total Requests</h3>
+                    <div class="value" id="total-requests">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Blocked Requests</h3>
+                    <div class="value" id="blocked-requests">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Allowed Requests</h3>
+                    <div class="value" id="allowed-requests">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Unique Domains</h3>
+                    <div class="value" id="unique-domains">0</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const logsTable = document.getElementById('logs-table');
+            const tbody = logsTable.querySelector('tbody');
+            const loadingIndicator = document.getElementById('loading-logs');
+            const refreshBtn = document.getElementById('refresh-logs');
+            
+            // Stats elements
+            const totalRequestsEl = document.getElementById('total-requests');
+            const blockedRequestsEl = document.getElementById('blocked-requests');
+            const allowedRequestsEl = document.getElementById('allowed-requests');
+            const uniqueDomainsEl = document.getElementById('unique-domains');
+            
+            // Sample data (replace with real API calls)
+            const sampleLogs = [
+                {
+                    id: 1,
+                    time: '2023-06-15 14:30:22',
+                    app: 'Chrome',
+                    domain: 'ads.google.com',
+                    status: 'blocked',
+                    type: 'Ad Network'
+                },
+                {
+                    id: 2,
+                    time: '2023-06-15 14:31:45',
+                    app: 'Firefox',
+                    domain: 'analytics.facebook.com',
+                    status: 'blocked',
+                    type: 'Tracker'
+                },
+                {
+                    id: 3,
+                    time: '2023-06-15 14:32:10',
+                    app: 'Safari',
+                    domain: 'api.example.com',
+                    status: 'allowed',
+                    type: 'API'
+                },
+                {
+                    id: 4,
+                    time: '2023-06-15 14:33:27',
+                    app: 'Edge',
+                    domain: 'tracker.adnetwork.com',
+                    status: 'blocked',
+                    type: 'Ad Network'
+                },
+                {
+                    id: 5,
+                    time: '2023-06-15 14:35:42',
+                    app: 'Chrome',
+                    domain: 'metrics.company.org',
+                    status: 'allowed',
+                    type: 'Analytics'
+                },
+                {
+                    id: 6,
+                    time: '2023-06-15 14:36:15',
+                    app: 'Safari',
+                    domain: 'malware.example.com',
+                    status: 'blocked',
+                    type: 'Malware'
+                },
+                {
+                    id: 7,
+                    time: '2023-06-15 14:37:30',
+                    app: 'Firefox',
+                    domain: 'cdn.trusted.com',
+                    status: 'allowed',
+                    type: 'CDN'
+                },
+                {
+                    id: 8,
+                    time: '2023-06-15 14:38:22',
+                    app: 'Chrome',
+                    domain: 'ads.doubleclick.net',
+                    status: 'blocked',
+                    type: 'Ad Network'
+                }
+            ];
+            
+            // Initialize the page
+            function init() {
+                loadLogs();
+                setupEventListeners();
+            }
+            
+            // Load logs into the table
+            function loadLogs() {
+                showLoading();
+                
+                // Simulate API delay
+                setTimeout(() => {
+                    renderLogs(sampleLogs);
+                    updateStats(sampleLogs);
+                    hideLoading();
+                }, 800);
+            }
+            
+            // Render logs to the table
+            function renderLogs(logs) {
+                tbody.innerHTML = '';
+                
+                logs.forEach(log => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${log.time}</td>
+                        <td>
+                            <div class="app-info">
+                                <i class="fab fa-${getAppIcon(log.app)}"></i>
+                                <span>${log.app}</span>
+                            </div>
+                        </td>
+                        <td>${log.domain}</td>
+                        <td>
+                            <span class="badge badge-${log.status}">
+                                ${log.status === 'blocked' ? 'Blocked' : 'Allowed'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-icon view-details" data-id="${log.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="btn btn-icon more-actions">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            }
+            
+            // Update stats cards
+            function updateStats(logs) {
+                const total = logs.length;
+                const blocked = logs.filter(log => log.status === 'blocked').length;
+                const allowed = logs.filter(log => log.status === 'allowed').length;
+                const uniqueDomains = [...new Set(logs.map(log => log.domain))].length;
+                
+                totalRequestsEl.textContent = total.toLocaleString();
+                blockedRequestsEl.textContent = blocked.toLocaleString();
+                allowedRequestsEl.textContent = allowed.toLocaleString();
+                uniqueDomainsEl.textContent = uniqueDomains.toLocaleString();
+            }
+            
+            // Get appropriate app icon
+            function getAppIcon(app) {
+                const appIcons = {
+                    'Chrome': 'chrome',
+                    'Firefox': 'firefox',
+                    'Safari': 'safari',
+                    'Edge': 'edge'
+                };
+                return appIcons[app] || 'window-maximize';
+            }
+            
+            // Show loading state
+            function showLoading() {
+                loadingIndicator.style.display = 'flex';
+                tbody.style.opacity = '0.5';
+            }
+            
+            // Hide loading state
+            function hideLoading() {
+                loadingIndicator.style.display = 'none';
+                tbody.style.opacity = '1';
+            }
+            
+            // Set up event listeners
+            function setupEventListeners() {
+                // Refresh button
+                refreshBtn.addEventListener('click', loadLogs);
+                
+                // View details buttons
+                document.addEventListener('click', function(e) {
+                    if (e.target.closest('.view-details')) {
+                        const button = e.target.closest('.view-details');
+                        const logId = button.getAttribute('data-id');
+                        const log = sampleLogs.find(l => l.id == logId);
+                        showLogDetails(log);
+                    }
+                });
+            }
+            
+            // Show log details modal
+            function showLogDetails(log) {
+                // In a real app, this would show a modal
+                alert(`Log Details:\n\n` +
+                      `Time: ${log.time}\n` +
+                      `App: ${log.app}\n` +
+                      `Domain: ${log.domain}\n` +
+                      `Status: ${log.status}\n` +
+                      `Type: ${log.type}`);
+            }
+            
+            // Initialize the page
+            init();
+        });
+    </script>
+</body>
+</html>

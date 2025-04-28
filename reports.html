@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Logs Report</title>
+    <link rel="stylesheet" href="css/reports.css">
+    <link rel="stylesheet" href="js/reports.js">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Report-specific styles */
+        .report-container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .report-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .report-title {
+            font-size: 1.8rem;
+            color: var(--primary);
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .report-filters {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-group {
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .filter-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .filter-group select,
+        .filter-group input {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: var(--bg);
+            color: var(--text);
+        }
+        
+        .filter-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+        
+        .logs-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .logs-table th {
+            background: var(--primary);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        .logs-table td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+        
+        .logs-table tr:nth-child(even) {
+            background-color: rgba(0,0,0,0.02);
+        }
+        
+        .logs-table tr:hover {
+            background-color: rgba(0,0,0,0.05);
+        }
+        
+        .log-severity {
+            display: inline-block;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .severity-critical {
+            background-color: #f44336;
+            color: white;
+        }
+        
+        .severity-high {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .severity-medium {
+            background-color: #ffc107;
+            color: #333;
+        }
+        
+        .severity-low {
+            background-color: #4caf50;
+            color: white;
+        }
+        
+        .severity-info {
+            background-color: #2196f3;
+            color: white;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+        
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #ddd;
+            background: var(--card-bg);
+            color: var(--text);
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        
+        .pagination button.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .pagination button:hover:not(.active) {
+            background: #f0f0f0;
+        }
+        
+        .no-logs {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+            background: var(--card-bg);
+            border-radius: 8px;
+        }
+        
+        .export-options {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .export-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            background: var(--card-bg);
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .export-dropdown a {
+            color: var(--text);
+            padding: 0.8rem 1rem;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .export-dropdown a:hover {
+            background: #f5f5f5;
+        }
+        
+        .export-options:hover .export-dropdown {
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .report-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .report-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .logs-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Animation -->
+    <div id="loading" class="loading-animation">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Header Section -->
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="Security Dashboard Logo" class="logo">
+            <h1>Security Logs Report</h1>
+        </div>
+        <nav class="main-nav" aria-label="Main navigation">
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="blocklist.html">Blocklist</a></li>
+                <li><a href="logs.html" class="active">Logs</a></li>
+                <li><a href="login.html" id="loginButton">Login</a></li>
+            </ul>
+        </nav>
+        <button id="darkModeToggle" class="dark-mode-toggle" aria-pressed="false" aria-label="Toggle dark mode">
+            <img src="assets/icons/moon.svg" alt="Dark Mode" class="icon">
+        </button>
+    </header>
+
+    <!-- Report Content -->
+    <main class="report-container">
+        <div class="report-header">
+            <h1 class="report-title">Security Event Logs</h1>
+            <div class="report-actions">
+                <button id="refreshLogs" class="btn primary">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+                <div class="export-options">
+                    <button class="btn secondary">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                    <div class="export-dropdown">
+                        <a href="#" id="exportPDF"><i class="fas fa-file-pdf"></i> PDF</a>
+                        <a href="#" id="exportCSV"><i class="fas fa-file-csv"></i> CSV</a>
+                        <a href="#" id="exportJSON"><i class="fas fa-file-code"></i> JSON</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="report-filters">
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="dateFrom">From Date</label>
+                    <input type="datetime-local" id="dateFrom" name="dateFrom">
+                </div>
+                <div class="filter-group">
+                    <label for="dateTo">To Date</label>
+                    <input type="datetime-local" id="dateTo" name="dateTo">
+                </div>
+                <div class="filter-group">
+                    <label for="severity">Severity</label>
+                    <select id="severity" name="severity">
+                        <option value="all">All Severities</option>
+                        <option value="critical">Critical</option>
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                        <option value="info">Info</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label for="sourceIP">Source IP</label>
+                    <input type="text" id="sourceIP" name="sourceIP" placeholder="Filter by source IP">
+                </div>
+                <div class="filter-group">
+                    <label for="destinationIP">Destination IP</label>
+                    <input type="text" id="destinationIP" name="destinationIP" placeholder="Filter by destination IP">
+                </div>
+                <div class="filter-group">
+                    <label for="eventType">Event Type</label>
+                    <select id="eventType" name="eventType">
+                        <option value="all">All Event Types</option>
+                        <option value="firewall">Firewall Block</option>
+                        <option value="intrusion">Intrusion Attempt</option>
+                        <option value="malware">Malware Detection</option>
+                        <option value="login">Login Attempt</option>
+                        <option value="system">System Event</option>
+                    </select>
+                </div>
+            </div>
+            <div class="filter-actions">
+                <button id="resetFilters" class="btn secondary">Reset Filters</button>
+                <button id="applyFilters" class="btn primary">Apply Filters</button>
+            </div>
+        </div>
+        
+        <div class="report-content">
+            <div class="report-summary">
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <h3>Total Logs</h3>
+                        <p id="totalLogs">1,248</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Critical Events</h3>
+                        <p id="criticalLogs">42</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Blocked Attacks</h3>
+                        <p id="blockedLogs">876</p>
+                    </div>
+                    <div class="summary-card">
+                        <h3>Last Updated</h3>
+                        <p id="lastUpdated">2023-11-15 14:30:45</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="logs-table">
+                    <thead>
+                        <tr>
+                            <th>Timestamp <button class="sort-btn" data-column="timestamp"><i class="fas fa-sort"></i></button></th>
+                            <th>Severity <button class="sort-btn" data-column="severity"><i class="fas fa-sort"></i></button></th>
+                            <th>Source IP <button class="sort-btn" data-column="sourceIP"><i class="fas fa-sort"></i></button></th>
+                            <th>Destination IP <button class="sort-btn" data-column="destinationIP"><i class="fas fa-sort"></i></button></th>
+                            <th>Event Type <button class="sort-btn" data-column="eventType"><i class="fas fa-sort"></i></button></th>
+                            <th>Description</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="logsTableBody">
+                        <!-- Logs will be loaded dynamically -->
+                        <tr>
+                            <td>2023-11-15 14:30:22</td>
+                            <td><span class="log-severity severity-critical">Critical</span></td>
+                            <td>192.168.1.105</td>
+                            <td>10.0.0.12</td>
+                            <td>Intrusion Attempt</td>
+                            <td>Multiple failed login attempts from suspicious IP</td>
+                            <td><button class="btn small"><i class="fas fa-search"></i> Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:28:56</td>
+                            <td><span class="log-severity severity-high">High</span></td>
+                            <td>45.227.253.109</td>
+                            <td>10.0.0.15</td>
+                            <td>Malware Detection</td>
+                            <td>Known malware signature detected in HTTP request</td>
+                            <td><button class="btn small"><i class="fas fa-search"></i> Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:25:33</td>
+                            <td><span class="log-severity severity-medium">Medium</span></td>
+                            <td>185.143.223.41</td>
+                            <td>10.0.0.22</td>
+                            <td>Port Scan</td>
+                            <td>Multiple connection attempts to closed ports</td>
+                            <td><button class="btn small"><i class="fas fa-search"></i> Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:22:18</td>
+                            <td><span class="log-severity severity-low">Low</span></td>
+                            <td>10.0.0.45</td>
+                            <td>10.0.0.12</td>
+                            <td>Policy Violation</td>
+                            <td>Unauthorized access attempt to restricted folder</td>
+                            <td><button class="btn small"><i class="fas fa-search"></i> Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>2023-11-15 14:20:05</td>
+                            <td><span class="log-severity severity-info">Info</span></td>
+                            <td>10.0.0.12</td>
+                            <td>8.8.8.8</td>
+                            <td>System Event</td>
+                            <td>Firewall rule updated by admin</td>
+                            <td><button class="btn small"><i class="fas fa-search"></i> Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination">
+                <button id="firstPage"><i class="fas fa-angle-double-left"></i></button>
+                <button id="prevPage"><i class="fas fa-angle-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <span>...</span>
+                <button class="page-btn">8</button>
+                <button id="nextPage"><i class="fas fa-angle-right"></i></button>
+                <button id="lastPage"><i class="fas fa-angle-double-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="blocklist.html">Blocklist</a></li>
+                    <li><a href="logs.html">Logs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Admin</h4>
+                <ul>
+                    <li><a href="admin/settings.html">Settings</a></li>
+                    <li><a href="admin/users.html">User Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>About</h4>
+                <p>Network Security Dashboard v1.0</p>
+                <p>&copy; 2023 All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication status
+            checkAuthStatus();
+            
+            // Initialize dark mode if set
+            initDarkMode();
+            
+            // Hide loading animation after page loads
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 500);
+            
+            // Event listeners for report functionality
+            document.getElementById('refreshLogs').addEventListener('click', refreshLogs);
+            document.getElementById('applyFilters').addEventListener('click', applyFilters);
+            document.getElementById('resetFilters').addEventListener('click', resetFilters);
+            
+            // Export buttons
+            document.getElementById('exportPDF').addEventListener('click', exportPDF);
+            document.getElementById('exportCSV').addEventListener('click', exportCSV);
+            document.getElementById('exportJSON').addEventListener('click', exportJSON);
+            
+            // Pagination buttons
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelector('.page-btn.active').classList.remove('active');
+                    this.classList.add('active');
+                    loadPage(parseInt(this.textContent));
+                });
+            });
+            
+            // Sort buttons
+            document.querySelectorAll('.sort-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const column = this.getAttribute('data-column');
+                    sortTable(column);
+                });
+            });
+            
+            // Load initial logs
+            loadLogs();
+        });
+        
+        function loadLogs() {
+            // In a real application, this would fetch from your API
+            console.log('Loading logs...');
+            // Simulate API call
+            setTimeout(() => {
+                updateLogCounts(1248, 42, 876);
+            }, 300);
+        }
+        
+        function refreshLogs() {
+            document.getElementById('loading').style.display = 'flex';
+            // Simulate refresh
+            setTimeout(() => {
+                loadLogs();
+                document.getElementById('loading').style.display = 'none';
+            }, 1000);
+        }
+        
+        function applyFilters() {
+            const dateFrom = document.getElementById('dateFrom').value;
+            const dateTo = document.getElementById('dateTo').value;
+            const severity = document.getElementById('severity').value;
+            const sourceIP = document.getElementById('sourceIP').value;
+            const destinationIP = document.getElementById('destinationIP').value;
+            const eventType = document.getElementById('eventType').value;
+            
+            console.log('Applying filters:', {
+                dateFrom, dateTo, severity, sourceIP, destinationIP, eventType
+            });
+            
+            // In a real application, this would send filters to your API
+            document.getElementById('loading').style.display = 'flex';
+            setTimeout(() => {
+                // Simulate filtered results
+                updateLogCounts(218, 12, 156);
+                document.getElementById('loading').style.display = 'none';
+            }, 800);
+        }
+        
+        function resetFilters() {
+            document.getElementById('dateFrom').value = '';
+            document.getElementById('dateTo').value = '';
+            document.getElementById('severity').value = 'all';
+            document.getElementById('sourceIP').value = '';
+            document.getElementById('destinationIP').value = '';
+            document.getElementById('eventType').value = 'all';
+            
+            // Reload with no filters
+            loadLogs();
+        }
+        
+        function updateLogCounts(total, critical, blocked) {
+            document.getElementById('totalLogs').textContent = total.toLocaleString();
+            document.getElementById('criticalLogs').textContent = critical.toLocaleString();
+            document.getElementById('blockedLogs').textContent = blocked.toLocaleString();
+            document.getElementById('lastUpdated').textContent = new Date().toISOString().replace('T', ' ').substring(0, 19);
+        }
+        
+        function exportPDF() {
+            alert('PDF export would be generated here');
+            // In a real app, use a library like jsPDF or window.print()
+        }
+        
+        function exportCSV() {
+            alert('CSV export would be generated here');
+            // In a real app, generate CSV data and download it
+        }
+        
+        function exportJSON() {
+            alert('JSON export would be generated here');
+            // In a real app, generate JSON and download it
+        }
+        
+        function loadPage(page) {
+            console.log('Loading page', page);
+            // In a real app, fetch paginated data from your API
+        }
+        
+        function sortTable(column) {
+            console.log('Sorting by', column);
+            // In a real app, implement sorting logic or fetch sorted data from API
+        }
+    </script>
+</body>
+</html>

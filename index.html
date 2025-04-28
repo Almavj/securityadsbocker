@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Network Security Dashboard for monitoring and managing network security">
+    <title>Network Security Dashboard</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/index.css"> 
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/darkmode.css"> 
+    <link rel="stylesheet" href="css/animation.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+     
+    <!-- Favicon -->
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+    <!-- Loading Indicator -->
+    <div id="loading" class="loading-overlay">
+        <div class="loading-spinner"></div>
+        <p>Loading Security Dashboard...</p>
+    </div>
+
+    <!-- Persistent Dashboard Header -->
+    <div class="dashboard-header">
+        <div class="dashboard-metrics">
+            <div class="metric-item">
+                <i class="fas fa-shield-alt"></i>
+                <div>
+                    <span class="metric-value" id="threats-blocked">0</span>
+                    <span class="metric-label">Threats Blocked</span>
+                </div>
+            </div>
+            <div class="metric-item">
+                <i class="fas fa-network-wired"></i>
+                <div>
+                    <span class="metric-value" id="active-connections">0</span>
+                    <span class="metric-label">Active Connections</span>
+                </div>
+            </div>
+            <div class="metric-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <div>
+                    <span class="metric-value" id="bandwidth-usage">0 Mbps</span>
+                    <span class="metric-label">Bandwidth</span>
+                </div>
+            </div>
+            <div class="metric-item">
+                <i class="fas fa-clock"></i>
+                <div>
+                    <span class="metric-value" id="last-updated">Just now</span>
+                    <span class="metric-label">Last Updated</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <header class="main-header">
+        <div class="logo-container">
+            <img src="assets/images/logo.png" alt="Security Dashboard Logo" class="logo">
+            <h1>Network Security Dashboard</h1>
+        </div>
+        <nav class="main-nav" aria-label="Main navigation">
+            <ul>
+                <li><a href="index.html" data-page="home" class="nav-link active">Home</a></li>
+                <li><a href="./dashboard.html" data-page="dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="/blocklist.html" data-page="blocklist" class="nav-link">Blocklist</a></li>
+                <li><a href="/logs.html" data-page="logs" class="nav-link">Logs</a></li>
+                <li><a href="/login.html" data-page="login" class="nav-link" id="loginButton">Login</a></li>
+            </ul>
+        </nav>
+        <button id="darkModeToggle" class="dark-mode-toggle" aria-pressed="false" aria-label="Toggle dark mode">
+            <img src="assets/icons/moon.svg" alt="Dark Mode" class="icon">
+        </button>
+    </header>
+
+    <!-- Main Content Container -->
+    <main id="main-content" class="container">
+        <!-- Content will be dynamically loaded here -->
+        <section id="home-page" class="page-content active">
+            <section class="hero-section">
+                <div class="hero-content">
+                    <h2>Network Security Management System</h2>
+                    <p>Monitor, analyze, and protect your network infrastructure with real-time security insights and automated threat prevention.</p>
+                    <div class="cta-buttons">
+                        <a href="dashboard.html" data-page="dashboard" class="btn primary">View Dashboard</a>
+                        <a href="login.html" data-page="login" class="btn secondary">Admin Login</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="assets/images/network-security.svg" alt="Network Security Illustration">
+                </div>
+            </section>
+
+            <section class="features-section">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="assets/icons/shield.svg" alt="Protection">
+                    </div>
+                    <h3>Real-time Protection</h3>
+                    <p>Monitor network traffic and block malicious activity in real-time using advanced IP blocklisting.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="assets/icons/activity.svg" alt="Monitoring">
+                    </div>
+                    <h3>Comprehensive Logging</h3>
+                    <p>Detailed logs of all network events and security incidents for forensic analysis.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <img src="assets/icons/settings.svg" alt="Management">
+                    </div>
+                    <h3>Centralized Management</h3>
+                    <p>Manage all security settings and user permissions from a single admin interface.</p>
+                </div>
+            </section>
+
+            <section class="status-section">
+                <h2>System Status</h2>
+                <div class="status-cards" id="systemStatus">
+                    <div class="status-card loading">
+                        <p>Loading system status...</p>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <!-- Other pages will be loaded here dynamically -->
+        <section id="dashboard-page" class="page-content"></section>
+        <section id="blocklist-page" class="page-content"></section>
+        <section id="logs-page" class="page-content"></section>
+        <section id="login-page" class="page-content"></section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#" data-page="dashboard">Dashboard</a></li>
+                    <li><a href="#" data-page="blocklist">Blocklist</a></li>
+                    <li><a href="#" data-page="logs">Logs</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Admin</h4>
+                <ul>
+                    <li><a href="admin/settings.html" data-page="settings">Settings</a></li>
+                    <li><a href="admin/users.html" data-page="users">User Management</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>About</h4>
+                <p>Network Security Dashboard v1.0</p>
+                <p>&copy; <span id="current-year"></span> All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <script src="js/index.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/blocklist.js"></script>
+    <script src="js/charts.js"></script>
+    
+    <script>
+        // Main application controller
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize systems
+            initApp();
+        });
+
+        function initApp() {
+            // Set current year in footer
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            
+            // Initialize systems
+            checkAuthStatus();
+            initDarkMode();
+            fetchSystemStatus();
+            setupNavigation();
+            startLiveUpdates();
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+            }, 800);
+        }
+
+        // Navigation system
+        function setupNavigation() {
+            // Handle nav link clicks
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    loadPage(page);
+                });
+            });
+
+            // Handle footer link clicks
+            document.querySelectorAll('.footer-section a').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.getAttribute('data-page');
+                    if (page) loadPage(page);
+                });
+            });
+
+            // Initial page load
+            const initialPage = window.location.hash.substring(1) || 'home';
+            loadPage(initialPage);
+        }
+
+        // Page loader
+        function loadPage(page) {
+            // Update URL
+            window.location.hash = page;
+            
+            // Update active nav link
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.toggle('active', link.getAttribute('data-page') === page);
+            });
+
+            // Hide all pages
+            document.querySelectorAll('.page-content').forEach(content => {
+                content.classList.remove('active');
+            });
+
+            // Show requested page
+            const pageElement = document.getElementById(`${page}-page`);
+            if (pageElement) {
+                pageElement.classList.add('active');
+                
+                // Load content if not already loaded
+                if (pageElement.innerHTML === '' && page !== 'home') {
+                    loadPageContent(page, pageElement);
+                }
+            }
+        }
+
+        // Load content for specific pages
+        function loadPageContent(page, container) {
+            container.innerHTML = '<div class="loading-content">Loading...</div>';
+            
+            // Simulate content loading
+            setTimeout(() => {
+                switch(page) {
+                    case 'dashboard':
+                        container.innerHTML = `
+                            <div class="dashboard-grid">
+                                <div class="dashboard-widget large">
+                                    <h2><i class="fas fa-chart-line"></i> Network Traffic</h2>
+                                    <div class="chart-container" id="traffic-chart"></div>
+                                </div>
+                                <div class="dashboard-widget">
+                                    <h2><i class="fas fa-shield-alt"></i> Security Overview</h2>
+                                    <div class="chart-container" id="security-chart"></div>
+                                </div>
+                                <div class="dashboard-widget">
+                                    <h2><i class="fas fa-list"></i> Recent Events</h2>
+                                    <div class="events-list" id="recent-events"></div>
+                                </div>
+                            </div>
+                        `;
+                        if (typeof initCharts === 'function') initCharts();
+                        break;
+                        
+                    case 'blocklist':
+                        container.innerHTML = `
+                            <div class="blocklist-container">
+                                <div class="blocklist-actions">
+                                    <button class="btn primary"><i class="fas fa-plus"></i> Add Entry</button>
+                                    <div class="search-box">
+                                        <input type="text" placeholder="Search blocklist...">
+                                        <button class="btn icon"><i class="fas fa-search"></i></button>
+                                    </div>
+                                </div>
+                                <div class="blocklist-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>IP/Domain</th>
+                                                <th>Threat Type</th>
+                                                <th>Date Added</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>192.168.1.105</td>
+                                                <td><span class="badge malware">Malware</span></td>
+                                                <td>2023-06-15</td>
+                                                <td>
+                                                    <button class="btn small danger"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn small"><i class="fas fa-edit"></i></button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>malicious-domain.com</td>
+                                                <td><span class="badge phishing">Phishing</span></td>
+                                                <td>2023-06-14</td>
+                                                <td>
+                                                    <button class="btn small danger"><i class="fas fa-trash"></i></button>
+                                                    <button class="btn small"><i class="fas fa-edit"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'logs':
+                        container.innerHTML = `
+                            <div class="logs-container">
+                                <div class="logs-filters">
+                                    <div class="filter-group">
+                                        <label>Log Type:</label>
+                                        <select>
+                                            <option>All Logs</option>
+                                            <option>Security</option>
+                                            <option>Network</option>
+                                            <option>System</option>
+                                        </select>
+                                    </div>
+                                    <div class="filter-group">
+                                        <label>Date Range:</label>
+                                        <select>
+                                            <option>Last 24 hours</option>
+                                            <option>Last 7 days</option>
+                                            <option>Last 30 days</option>
+                                            <option>Custom range</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="logs-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Timestamp</th>
+                                                <th>Event Type</th>
+                                                <th>Source</th>
+                                                <th>Description</th>
+                                                <th>Severity</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>2023-06-15 14:32:45</td>
+                                                <td>Security</td>
+                                                <td>192.168.1.105</td>
+                                                <td>Blocked malicious connection attempt</td>
+                                                <td><span class="severity high">High</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>2023-06-15 14:30:12</td>
+                                                <td>Network</td>
+                                                <td>Gateway</td>
+                                                <td>Bandwidth threshold exceeded</td>
+                                                <td><span class="severity medium">Medium</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                        
+                    case 'login':
+                        container.innerHTML = `
+                            <div class="login-container">
+                                <div class="login-card">
+                                    <h2><i class="fas fa-lock"></i> Admin Login</h2>
+                                    <form id="login-form">
+                                        <div class="form-group">
+                                            <label for="username">Username</label>
+                                            <input type="text" id="username" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="password">Password</label>
+                                            <input type="password" id="password" required>
+                                        </div>
+                                        <button type="submit" class="btn primary">Login</button>
+                                    </form>
+                                </div>
+                            </div>
+                        `;
+                        break;
+                }
+            }, 300);
+        }
+
+        // Live updates for dashboard metrics
+        function startLiveUpdates() {
+            // Initial update
+            updateDashboardMetrics();
+            
+            // Update every 3 seconds
+            setInterval(updateDashboardMetrics, 3000);
+        }
+
+        function updateDashboardMetrics() {
+            // Simulate live data
+            document.getElementById('threats-blocked').textContent = 
+                Math.floor(Math.random() * 100).toLocaleString();
+                
+            document.getElementById('active-connections').textContent = 
+                Math.floor(10 + Math.random() * 50);
+                
+            document.getElementById('bandwidth-usage').textContent = 
+                (5 + Math.random() * 10).toFixed(1) + ' Mbps';
+                
+            document.getElementById('last-updated').textContent = 
+                new Date().toLocaleTimeString();
+        }
+
+        // System status loader
+        function fetchSystemStatus() {
+            fetch('api/system_status.php')
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    return response.json();
+                })
+                .then(data => {
+                    updateSystemStatusUI(data);
+                })
+                .catch(error => {
+                    console.error('Error fetching system status:', error);
+                    showStatusError();
+                });
+        }
+
+        function updateSystemStatusUI(data) {
+            const statusContainer = document.getElementById('systemStatus');
+            if (!statusContainer || !data) return;
+
+            statusContainer.innerHTML = `
+                <div class="status-card ${data.status === 'active' ? 'success' : 'error'}">
+                    <h3><i class="fas fa-firewall"></i> Firewall Status</h3>
+                    <p>${data.status === 'active' ? 'Active' : 'Inactive'}</p>
+                    <p>Last Updated: ${data.last_updated || 'N/A'}</p>
+                </div>
+                <div class="status-card ${data.threats_blocked > 0 ? 'warning' : 'success'}">
+                    <h3><i class="fas fa-shield-virus"></i> Threats Blocked</h3>
+                    <p>${data.threats_blocked || 0} today</p>
+                </div>
+                <div class="status-card">
+                    <h3><i class="fas fa-list-ol"></i> Blocklist Entries</h3>
+                    <p>${data.blocklist_count || 0} active rules</p>
+                </div>
+            `;
+        }
+
+        function showStatusError() {
+            const statusContainer = document.getElementById('systemStatus');
+            if (statusContainer) {
+                statusContainer.innerHTML = `
+                    <div class="status-card error">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Connection Error</h3>
+                        <p>Failed to load status. Please try again later.</p>
+                        <button onclick="fetchSystemStatus()" class="btn small">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        // Dark mode toggle
+        function initDarkMode() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            
+            // Check for saved preference or use system preference
+            const currentMode = localStorage.getItem('darkMode') || 
+                               (prefersDarkScheme.matches ? 'enabled' : 'disabled');
+            
+            if (currentMode === 'enabled') {
+                document.body.classList.add('dark-mode');
+                darkModeToggle.setAttribute('aria-pressed', 'true');
+                darkModeToggle.innerHTML = '<img src="assets/icons/sun.svg" alt="Light Mode" class="icon">';
+            }
+            
+            // Toggle dark mode
+            darkModeToggle.addEventListener('click', () => {
+                document.body.classList.toggle('dark-mode');
+                const isDarkMode = document.body.classList.contains('dark-mode');
+                
+                darkModeToggle.setAttribute('aria-pressed', isDarkMode.toString());
+                darkModeToggle.innerHTML = isDarkMode 
+                    ? '<img src="assets/icons/sun.svg" alt="Light Mode" class="icon">'
+                    : '<img src="assets/icons/moon.svg" alt="Dark Mode" class="icon">';
+                
+                localStorage.setItem('darkMode', isDarkMode ? 'enabled' : 'disabled');
+            });
+            
+            // Watch for system preference changes
+            prefersDarkScheme.addEventListener('change', e => {
+                if (localStorage.getItem('darkMode') === null) {
+                    document.body.classList.toggle('dark-mode', e.matches);
+                    darkModeToggle.setAttribute('aria-pressed', e.matches.toString());
+                    darkModeToggle.innerHTML = e.matches 
+                        ? '<img src="assets/icons/sun.svg" alt="Light Mode" class="icon">'
+                        : '<img src="assets/icons/moon.svg" alt="Dark Mode" class="icon">';
+                }
+            });
+        }
+
+        // Authentication status check
+        function checkAuthStatus() {
+            // In a real app, this would verify authentication with the server
+            console.log('[Auth] Checking authentication status');
+        }
+    </script>
+</body>
+</html>

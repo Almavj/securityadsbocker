@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blocklist Manager | AdFree</title>
+    <link rel="stylesheet" href="/css/blocklist.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-layout">
+    <!-- Sidebar (Same as dashboard.html) -->
+    <aside class="sidebar">[...]</aside>
+    
+    <main class="main-content">
+        <header class="content-header">
+            <h1><i class="fas fa-ban"></i> Blocklist Manager</h1>
+            <div class="header-actions">
+                <button id="update-blocklists" class="btn btn-primary">
+                    <i class="fas fa-sync-alt"></i> Update from Repositories
+                </button>
+                <button id="add-domain" class="btn btn-secondary">
+                    <i class="fas fa-plus"></i> Add Domain
+                </button>
+            </div>
+        </header>
+
+        <div class="blocklist-container">
+            <!-- Source Selection -->
+            <div class="source-controls">
+                <div class="source-card active">
+                    <h3><i class="fas fa-file-alt"></i> Custom Blocklist</h3>
+                    <p>Your personal blocked domains</p>
+                    <div class="domain-count">24 domains</div>
+                </div>
+                
+                <div class="source-card">
+                    <h3><i class="fab fa-github"></i> StevenBlack/hosts</h3>
+                    <p>Popular unified hosts file</p>
+                    <div class="domain-count">58,742 domains</div>
+                </div>
+                
+                <div class="source-card">
+                    <h3><i class="fas fa-shield-alt"></i> AdAway Default</h3>
+                    <p>Classic mobile ad blocking</p>
+                    <div class="domain-count">1,245 domains</div>
+                </div>
+            </div>
+
+            <!-- Domain Management -->
+            <div class="domain-management">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Search domains...">
+                    </div>
+                    <div class="bulk-actions">
+                        <button class="btn btn-sm"><i class="fas fa-download"></i> Export</button>
+                        <button class="btn btn-sm"><i class="fas fa-upload"></i> Import</button>
+                        <button class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Clear All</button>
+                    </div>
+                </div>
+
+                <div class="domain-list-container">
+                    <table class="domain-list">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox"></th>
+                                <th>Domain</th>
+                                <th>Type</th>
+                                <th>Source</th>
+                                <th>Added</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox"></td>
+                                <td>ads.google.com</td>
+                                <td><span class="badge badge-primary">Ad Network</span></td>
+                                <td>Custom</td>
+                                <td>2 days ago</td>
+                                <td>
+                                    <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                                    <button class="btn-icon btn-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <!-- More rows will be loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="btn btn-sm" disabled><i class="fas fa-chevron-left"></i></button>
+                    <span>Page 1 of 5</span>
+                    <button class="btn btn-sm"><i class="fas fa-chevron-right"></i></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add Domain Modal -->
+    <div class="modal" id="add-domain-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Domain</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="domain-form">
+                    <div class="form-group">
+                        <label>Domain</label>
+                        <input type="text" placeholder="example.com" required>
+                        <small>Wildcards supported (e.g., *.example.com)</small>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select>
+                            <option>Advertising</option>
+                            <option>Tracking</option>
+                            <option>Malware</option>
+                            <option>Custom</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Comment</label>
+                        <textarea placeholder="Optional note"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn">Cancel</button>
+                <button class="btn btn-primary">Add Domain</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/main.js"></script>
+    <script src="/js/blocklist.js"></script>
+</body>
+</html>

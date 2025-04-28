@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - Network Security Dashboard</title>
+    <link rel="stylesheet" href="css/admin.css" />
+    <link rel="stylesheet" href="css/darkmode.css" />
+    <link rel="stylesheet" href="css/settings.css" />
+    <link rel="stylesheet" href="css/animation.css" />
+    
+  <style>
+    .settings-container {
+      max-width: 900px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      margin-bottom: 1rem;
+      color: var(--text);
+    }
+
+    .setting-group {
+      margin-bottom: 2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 0.7rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .toggle-switch {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .toggle-switch input {
+      width: 40px;
+      height: 20px;
+    }
+
+    .warning {
+      background: #fff3cd;
+      padding: 1rem;
+      border: 1px solid #ffeeba;
+      color: #856404;
+      border-radius: 8px;
+      margin-bottom: 2rem;
+    }
+
+    button {
+      padding: 0.7rem 1.2rem;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <h2>System Settings</h2>
+
+    <div class="warning">
+      <strong>Note:</strong> Root access is required for full device-level protection and ad-blocking. Unauthorized use may void warranties.
+    </div>
+
+    <div class="setting-group">
+      <label for="theme-toggle">Dark Mode</label>
+      <div class="toggle-switch">
+        <input type="checkbox" id="theme-toggle" />
+        <span>Enable Dark Mode</span>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label for="adblock-toggle">Ad Blocker</label>
+      <div class="toggle-switch">
+        <input type="checkbox" id="adblock-toggle" />
+        <span>Enable Ad Blocking (Requires Root)</span>
+      </div>
+    </div>
+
+    <div class="setting-group">
+      <label for="log-retention">Log Retention Period (days)</label>
+      <input type="number" id="log-retention" min="1" value="30" />
+    </div>
+
+    <div class="setting-group">
+      <label for="whitelist">Whitelist Domains (comma-separated)</label>
+      <textarea id="whitelist" rows="3" placeholder="example.com, trusted.org"></textarea>
+    </div>
+
+    <div class="setting-group">
+      <label for="blacklist">Blacklist Domains (comma-separated)</label>
+      <textarea id="blacklist" rows="3" placeholder="ads.badsite.com, tracking.spy.net"></textarea>
+    </div>
+
+    <button id="save-settings">Save Settings</button>
+  </div>
+
+  <script>
+    // Theme toggle
+    document.getElementById('theme-toggle').addEventListener('change', function () {
+      document.body.classList.toggle('dark-mode', this.checked);
+    });
+
+    // Save settings
+    document.getElementById('save-settings').addEventListener('click', () => {
+      const settings = {
+        darkMode: document.getElementById('theme-toggle').checked,
+        adBlockEnabled: document.getElementById('adblock-toggle').checked,
+        logRetention: parseInt(document.getElementById('log-retention').value),
+        whitelist: document.getElementById('whitelist').value.split(',').map(d => d.trim()),
+        blacklist: document.getElementById('blacklist').value.split(',').map(d => d.trim())
+      };
+
+      console.log("Settings Saved:", settings);
+      alert("Settings have been saved.");
+      // TODO: Save to localStorage or backend
+    });
+  </script>
+</body>
+</html>

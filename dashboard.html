@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Dashboard | AdFree</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="assets/images/logo.svg" alt="AdFree Logo" class="logo">
+            <h2>AdFree Security</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="active">
+                    <a href="#">
+                        <i class="fas fa-tachometer-alt"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="blocklist.html">
+                        <i class="fas fa-ban"></i>
+                        <span>Blocklist</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="logs.html">
+                        <i class="fas fa-clipboard-list"></i>
+                        <span>Activity Logs</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="admin/settings.html">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="reports.html">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Reports</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <img src="assets/images/user-avatar.jpg" alt="User Avatar">
+                <div class="user-info">
+                    <span class="username">Admin User</span>
+                    <span class="user-role">Administrator</span>
+                </div>
+            </div>
+            <button class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </aside>
+    
+    <main class="main-content">
+        <header class="content-header">
+            <div class="header-left">
+                <button class="btn-sidebar-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Security Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="notification-bell">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-count">3</span>
+                </div>
+                <div class="search-box">
+                    <input type="text" placeholder="Search...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <button id="darkModeToggle" class="btn-icon">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div class="dashboard-content">
+            <!-- Stats Cards Row -->
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon bg-danger">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Threats Blocked</h3>
+                        <span class="stat-value">1,248</span>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 12% from yesterday
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon bg-warning">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Active Blocklists</h3>
+                        <span class="stat-value">8</span>
+                        <span class="stat-change neutral">
+                            <i class="fas fa-equals"></i> No change
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon bg-success">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Uptime</h3>
+                        <span class="stat-value">99.97%</span>
+                        <span class="stat-change negative">
+                            <i class="fas fa-arrow-down"></i> 0.01% from last week
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon bg-primary">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3>Response Time</h3>
+                        <span class="stat-value">12ms</span>
+                        <span class="stat-change positive">
+                            <i class="fas fa-arrow-up"></i> 3ms faster
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts Row -->
+            <div class="charts-row">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Threats Blocked (Last 30 Days)</h3>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm time-filter active" data-range="7d">7D</button>
+                            <button class="btn btn-sm time-filter" data-range="30d">30D</button>
+                            <button class="btn btn-sm time-filter" data-range="90d">90D</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="threatsChart"></canvas>
+                    </div>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <h3>Traffic Sources</h3>
+                        <div class="chart-actions">
+                            <button class="btn btn-sm chart-type active" data-type="doughnut">Doughnut</button>
+                            <button class="btn btn-sm chart-type" data-type="pie">Pie</button>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="sourcesChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity and Top Blocked Row -->
+            <div class="bottom-row">
+                <div class="activity-card">
+                    <div class="card-header">
+                        <h3>Recent Security Events</h3>
+                        <div class="card-actions">
+                            <button id="refresh-activity" class="btn btn-sm">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                            <button class="btn btn-sm">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                    </div>
+                    <div class="activity-list" id="activity-list">
+                        <div class="activity-item critical">
+                            <div class="activity-icon">
+                                <i class="fas fa-skull-crossbones"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Malware Detected</div>
+                                <div class="activity-meta">
+                                    <span><i class="fas fa-globe"></i> malware-domain.com</span>
+                                    <span><i class="fas fa-clock"></i> 2 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-action">
+                                <button class="btn btn-sm btn-danger">Details</button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item warning">
+                            <div class="activity-icon">
+                                <i class="fas fa-ad"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Ad Network Blocked</div>
+                                <div class="activity-meta">
+                                    <span><i class="fas fa-globe"></i> ads.doubleclick.net</span>
+                                    <span><i class="fas fa-clock"></i> 15 minutes ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-action">
+                                <button class="btn btn-sm btn-warning">Details</button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user-shield"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Tracker Blocked</div>
+                                <div class="activity-meta">
+                                    <span><i class="fas fa-globe"></i> analytics.google.com</span>
+                                    <span><i class="fas fa-clock"></i> 1 hour ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-action">
+                                <button class="btn btn-sm">Details</button>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-shield-virus"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-title">Phishing Attempt Blocked</div>
+                                <div class="activity-meta">
+                                    <span><i class="fas fa-globe"></i> fake-login.com</span>
+                                    <span><i class="fas fa-clock"></i> 3 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="activity-action">
+                                <button class="btn btn-sm">Details</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="logs.html" class="view-all">View All Activity <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+                
+                <div class="top-blocked-card">
+                    <div class="card-header">
+                        <h3>Top Blocked Domains</h3>
+                        <div class="card-actions">
+                            <button class="btn btn-sm">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    <div class="top-blocked-list">
+                        <div class="top-blocked-item">
+                            <div class="domain-rank">1</div>
+                            <div class="domain-info">
+                                <div class="domain-name">tracking.facebook.com</div>
+                                <div class="domain-stats">
+                                    <span>1,042 blocks</span>
+                                    <span class="badge badge-danger">Tracker</span>
+                                </div>
+                            </div>
+                            <div class="domain-actions">
+                                <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="top-blocked-item">
+                            <div class="domain-rank">2</div>
+                            <div class="domain-info">
+                                <div class="domain-name">ads.google.com</div>
+                                <div class="domain-stats">
+                                    <span>876 blocks</span>
+                                    <span class="badge badge-warning">Ad Network</span>
+                                </div>
+                            </div>
+                            <div class="domain-actions">
+                                <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="top-blocked-item">
+                            <div class="domain-rank">3</div>
+                            <div class="domain-info">
+                                <div class="domain-name">metrics.apple.com</div>
+                                <div class="domain-stats">
+                                    <span>754 blocks</span>
+                                    <span class="badge badge-primary">Analytics</span>
+                                </div>
+                            </div>
+                            <div class="domain-actions">
+                                <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="top-blocked-item">
+                            <div class="domain-rank">4</div>
+                            <div class="domain-info">
+                                <div class="domain-name">malware-c2-server.com</div>
+                                <div class="domain-stats">
+                                    <span>632 blocks</span>
+                                    <span class="badge badge-danger">Malware</span>
+                                </div>
+                            </div>
+                            <div class="domain-actions">
+                                <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                        
+                        <div class="top-blocked-item">
+                            <div class="domain-rank">5</div>
+                            <div class="domain-info">
+                                <div class="domain-name">adservice.google.com</div>
+                                <div class="domain-stats">
+                                    <span>587 blocks</span>
+                                    <span class="badge badge-warning">Ad Network</span>
+                                </div>
+                            </div>
+                            <div class="domain-actions">
+                                <button class="btn-icon"><i class="fas fa-ellipsis-v"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="blocklist.html" class="view-all">Manage Blocklist <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

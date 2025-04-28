@@ -1,0 +1,113 @@
+/* ===== SETTINGS PAGE STYLES ===== */
+
+:root {
+    --bg: #2743c0;
+    --card-bg: #ffffff;
+    --primary: #007bff;
+    --text: #222;
+    --text-light: #555;
+    --input-border: #ccc;
+    --warning-bg: #fff3cd;
+    --warning-border: #ffeeba;
+    --warning-text: #856404;
+  }
+  
+  body {
+    background: var(--bg);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+  }
+  
+  .settings-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+  
+  .setting-group {
+    margin-bottom: 2rem;
+  }
+  
+  .setting-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  
+  input[type="text"],
+  input[type="number"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.7rem;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 1rem;
+  }
+  
+  textarea {
+    resize: vertical;
+  }
+  
+  .toggle-switch {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  .toggle-switch input[type="checkbox"] {
+    width: 40px;
+    height: 20px;
+    cursor: pointer;
+  }
+  
+  .warning {
+    background: var(--warning-bg);
+    padding: 1rem;
+    border: 1px solid var(--warning-border);
+    color: var(--warning-text);
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    font-size: 0.95rem;
+  }
+  
+  button {
+    padding: 0.7rem 1.2rem;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+  }
+  
+  button:hover {
+    background: darken(var(--primary), 10%);
+  }
+  
+  /* Dark Mode Support */
+  body.dark-mode {
+    --bg: #1e1e1e;
+    --card-bg: #2a2a2a;
+    --text: #f0f0f0;
+    --text-light: #aaa;
+    --input-border: #444;
+    --warning-bg: #4d3c15;
+    --warning-border: #664c1e;
+    --warning-text: #ffe08a;
+  }
+  

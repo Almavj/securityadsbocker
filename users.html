@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Management - Dashboard</title>
+  <link rel="stylesheet" href="css/users.css" />
+  <link rel="stylesheet" href="css/darkmode.css" />
+</head>
+<body>
+  <div class="user-container">
+    <h2>User Management</h2>
+
+    <div class="user-actions">
+      <button id="addUserBtn">Add New User</button>
+      <input type="text" id="searchUser" placeholder="Search users..." />
+    </div>
+
+    <table class="user-table">
+      <thead>
+        <tr>
+          <th>Username</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>allanmacharia</td>
+          <td>allan@example.com</td>
+          <td>Admin</td>
+          <td><span class="status active">Active</span></td>
+          <td>
+            <button class="edit-btn">Edit</button>
+            <button class="delete-btn">Delete</button>
+          </td>
+        </tr>
+        <!-- More rows will be added dynamically -->
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>

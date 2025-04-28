@@ -1,0 +1,35 @@
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.dark-mode .main-header,
+.dark-mode .main-footer {
+    background-color: #1e1e1e;
+}
+
+.dark-mode .main-nav a,
+.dark-mode .main-footer a {
+    color: #90caf9;
+}
+
+.dark-mode .btn.primary {
+    background-color: #0d47a1;
+    color: #fff;
+}
+
+.dark-mode .btn.secondary {
+    background-color: #424242;
+    color: #fff;
+}
+
+.dark-mode .status-card {
+    background-color: #1c1c1c;
+    border: 1px solid #333;
+}
+
+.dark-mode .feature-card {
+    background-color: #1a1a1a;
+    border: 1px solid #444;
+}

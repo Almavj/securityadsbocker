@@ -1,0 +1,157 @@
+/* ===== USER MANAGEMENT STYLES ===== */
+
+:root {
+    --bg: #5e829b;
+    --card-bg: #ffffff;
+    --primary: #007bff;
+    --text: #222;
+    --input-border: #ccc;
+    --danger: #e74c3c;
+    --success: #2ecc71;
+    --gray: #7f8c8d;
+  }
+  
+  body {
+    background: var(--bg);
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: var(--text);
+  }
+  
+  .user-container {
+    max-width: 1000px;
+    margin: 2rem auto;
+    background: var(--card-bg);
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+  
+  h2 {
+    margin-bottom: 1.5rem;
+    color: var(--text);
+  }
+  
+  .user-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+  
+  .user-actions input[type="text"] {
+    padding: 0.6rem 1rem;
+    width: 250px;
+    border: 1px solid var(--input-border);
+    border-radius: 6px;
+    background: var(--bg);
+    color: var(--text);
+  }
+  
+  .user-actions button {
+    background: var(--primary);
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+  }
+  
+  .user-actions button:hover {
+    background: #0056b3;
+  }
+  
+  .user-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--card-bg);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  .user-table th,
+  .user-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+  }
+  
+  .user-table th {
+    background: var(--primary);
+    color: white;
+  }
+  
+  .status {
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .status.active {
+    background-color: var(--success);
+    color: white;
+  }
+  
+  .status.inactive {
+    background-color: var(--danger);
+    color: white;
+  }
+  
+  .edit-btn,
+  .delete-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+    margin-right: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  .edit-btn {
+    background: #3498db;
+    color: white;
+  }
+  
+  .delete-btn {
+    background: var(--danger);
+    color: white;
+  }
+  
+  .edit-btn:hover {
+    background: #2c80b4;
+  }
+  
+  .delete-btn:hover {
+    background: #c0392b;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .user-actions {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .user-actions input {
+      width: 100%;
+    }
+  
+    .user-table {
+      display: block;
+      overflow-x: auto;
+    }
+  }
+  
+  /* Dark Mode */
+  body.dark-mode {
+    --bg: #1e1e1e;
+    --card-bg: #2a2a2a;
+    --text: #f0f0f0;
+    --input-border: #444;
+    --primary: #2980b9;
+    --danger: #e74c3c;
+    --success: #27ae60;
+  }
+  
